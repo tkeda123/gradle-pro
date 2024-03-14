@@ -20,8 +20,10 @@ dependencies {
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
+
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'org.gradle.sample:library:1.1'
     implementation 'org.gradle.sample:library:1.1'
 }
 
@@ -40,11 +42,33 @@ tasks.named('test') {
 
 
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            groupId = 'tatsuya.gradle'
+            artifactId = 'library'
+            version = '1.1'
+        }
+    }
+    repositories {
+        mavenCentral()
+        maven {
+            // NexusのURLを指定
+            url = 'http://localhost:8081/repository/maven-releases/'
+            // Nexusへの認証情報を設定
+            credentials {
+                username = 'admin'
+                password = 'password'
+            }
+        allowInsecureProtocol = true
+        }
+    }
+}
 
 
 
 repositories {
-    mavenCentral()
     maven {
         url 'http://localhost:8081/repository/maven-releases/'
         credentials {
